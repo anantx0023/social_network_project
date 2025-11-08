@@ -10,19 +10,10 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          {/* Default route redirects to login */}
           <Route path="/" element={<Navigate to="/login" replace />} />
-          
-          {/* Login Page */}
           <Route path="/login" element={<LoginPage />} />
-          
-          {/* Signup Page */}
           <Route path="/signup" element={<SignupPage />} />
-          
-          {/* Home Page (Protected - requires authentication) */}
           <Route path="/home" element={<HomePage />} />
-          
-          {/* Create Post Page (Protected - requires authentication) */}
           <Route path="/create-post" element={<CreatePostPage />} />
         </Routes>
       </div>

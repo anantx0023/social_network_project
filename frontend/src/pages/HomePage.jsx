@@ -19,12 +19,10 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user is logged in
     const token = localStorage.getItem('access_token');
     const userData = localStorage.getItem('user');
     
     if (!token) {
-      // Redirect to login if not authenticated
       navigate('/login');
       return;
     }
@@ -48,13 +46,9 @@ const HomePage = () => {
   const handleShareProfile = () => {
     if (!user) return;
     
-    // Create a shareable message
     const message = `Check out ${user.full_name}'s profile on our Social Network! 🌟\n\nEmail: ${user.email}\nMember since: ${formatDate(user.date_joined)}`;
-    
-    // Encode the message for URL
     const encodedMessage = encodeURIComponent(message);
     
-    // Open WhatsApp with the pre-filled message
     window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
   };
 
@@ -91,13 +85,11 @@ const HomePage = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         setError('Image size should not exceed 5MB');
         return;
       }
       
-      // Validate file type
       if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
         setError('Only JPEG, JPG, and PNG files are allowed');
         return;
@@ -128,19 +120,17 @@ const HomePage = () => {
 
       const response = await axios.patch('/profile/', formData);
       
-      // Update user in state and localStorage
       const updatedUser = response.data.user;
       setUser(updatedUser);
       localStorage.setItem('user', JSON.stringify(updatedUser));
       
       setSuccess('Profile updated successfully!');
       
-      // Close modal after 1.5 seconds
       setTimeout(() => {
         setShowEditModal(false);
         setNewProfilePicture(null);
         setPreviewUrl(null);
-        window.location.reload(); // Refresh to update all components
+        window.location.reload();
       }, 1500);
       
     } catch (err) {
@@ -164,10 +154,8 @@ const HomePage = () => {
       <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-          {/* Left Sidebar - User Profile Card */}
           <div className="lg:col-span-3">
             <div className="bg-white rounded-2xl shadow-md p-6 sticky top-6">
-              {/* Profile Picture with Edit Icon */}
               <div className="relative w-32 h-32 mx-auto mb-4">
                 {user.profile_picture ? (
                   <img
@@ -192,7 +180,6 @@ const HomePage = () => {
                 </button>
               </div>
 
-              {/* User Info */}
               <div className="text-center mb-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-1">{user.full_name}</h2>
                 <p className="text-sm text-gray-600 mb-3">{user.email}</p>
@@ -226,14 +213,12 @@ const HomePage = () => {
             </div>
           </div>
 
-          {/* Center - Posts Feed */}
           <div className="lg:col-span-9">
             <PostList />
           </div>
         </div>
       </div>
 
-      {/* Floating Action Button */}
       <button
         onClick={handleCreatePost}
         className="fixed bottom-8 right-8 bg-blue-500 text-white p-4 rounded-full shadow-2xl hover:bg-blue-600 hover:scale-110 transition-all duration-300 z-40 group"
@@ -247,12 +232,10 @@ const HomePage = () => {
         </span>
       </button>
 
-      {/* Edit Profile Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
-              {/* Modal Header */}
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">Edit Profile</h2>
                 <button
@@ -271,7 +254,6 @@ const HomePage = () => {
                 </button>
               </div>
 
-              {/* Error/Success Messages */}
               {error && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
                   {error}
@@ -284,10 +266,8 @@ const HomePage = () => {
                 </div>
               )}
 
-              {/* Edit Form */}
               <form onSubmit={handleSubmitEdit} className="space-y-5">
                 
-                {/* Profile Picture */}
                 <div className="flex flex-col items-center">
                   <div className="relative w-32 h-32 mb-3">
                     {previewUrl ? (
@@ -327,7 +307,6 @@ const HomePage = () => {
                   />
                 </div>
 
-                {/* Full Name */}
                 <div>
                   <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-1">
                     Full Name
@@ -343,7 +322,6 @@ const HomePage = () => {
                   />
                 </div>
 
-                {/* Date of Birth */}
                 <div>
                   <label htmlFor="date_of_birth" className="block text-sm font-medium text-gray-700 mb-1">
                     Date of Birth
@@ -358,7 +336,6 @@ const HomePage = () => {
                   />
                 </div>
 
-                {/* Email (Read-only) */}
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                     Email (cannot be changed)
@@ -372,7 +349,6 @@ const HomePage = () => {
                   />
                 </div>
 
-                {/* Submit Button */}
                 <button
                   type="submit"
                   disabled={loading}

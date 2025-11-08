@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import status, generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,10 +13,6 @@ from .serializers import (
 
 
 class SignupView(generics.CreateAPIView):
-    """
-    API endpoint for user registration/signup
-    POST /api/signup/
-    """
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = (permissions.AllowAny,)
@@ -28,7 +23,6 @@ class SignupView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         
-        # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
         
         return Response({
@@ -42,10 +36,6 @@ class SignupView(generics.CreateAPIView):
 
 
 class LoginView(APIView):
-    """
-    API endpoint for user login
-    POST /api/login/
-    """
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()
     
@@ -58,14 +48,10 @@ class LoginView(APIView):
                 'error': 'Please provide both email and password'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # Convert email to lowercase to match signup
         email = email.lower()
-        
-        # Authenticate user
         user = authenticate(request, username=email, password=password)
         
         if user is not None:
-            # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
             
             return Response({
@@ -83,20 +69,13 @@ class LoginView(APIView):
 
 
 class ProfileView(APIView):
-    """
-    API endpoint to view and update user profile
-    GET /api/profile/ - View profile
-    PATCH /api/profile/ - Update profile
-    """
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request):
-        """Get current user's profile"""
         serializer = UserSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def patch(self, request):
-        """Update current user's profile (except email)"""
         serializer = UserSerializer(
             request.user,
             data=request.data,
@@ -114,17 +93,11 @@ class ProfileView(APIView):
 
 
 class PostListCreateView(generics.ListCreateAPIView):
-    """
-    API endpoint to list all posts and create new post
-    GET /api/posts/ - List all posts
-    POST /api/posts/ - Create new post
-    """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
     
     def perform_create(self, serializer):
-        """Set the user to the current authenticated user"""
         serializer.save(user=self.request.user)
     
     def create(self, request, *args, **kwargs):
@@ -139,18 +112,11 @@ class PostListCreateView(generics.ListCreateAPIView):
 
 
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint to retrieve, update, or delete a specific post
-    GET /api/posts/<id>/ - Get post details
-    PATCH /api/posts/<id>/ - Update post
-    DELETE /api/posts/<id>/ - Delete post
-    """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
-        """Filter to only allow users to access their own posts"""
         return Post.objects.filter(user=self.request.user)
     
     def destroy(self, request, *args, **kwargs):
@@ -162,10 +128,6 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PostLikeView(APIView):
-    """
-    API endpoint to toggle like on a post
-    POST /api/posts/<id>/like/
-    """
     permission_classes = [permissions.IsAuthenticated]
     
     def post(self, request, pk):
@@ -176,7 +138,6 @@ class PostLikeView(APIView):
                 'error': 'Post not found'
             }, status=status.HTTP_404_NOT_FOUND)
         
-        # Check if user already reacted to this post
         reaction, created = Reaction.objects.get_or_create(
             user=request.user,
             post=post,
@@ -184,13 +145,10 @@ class PostLikeView(APIView):
         )
         
         if not created:
-            # Reaction exists
             if reaction.is_like:
-                # Already liked, remove the like
                 reaction.delete()
                 message = 'Like removed'
             else:
-                # Was dislike, change to like
                 reaction.is_like = True
                 reaction.save()
                 message = 'Changed to like'
@@ -205,10 +163,6 @@ class PostLikeView(APIView):
 
 
 class PostDislikeView(APIView):
-    """
-    API endpoint to toggle dislike on a post
-    POST /api/posts/<id>/dislike/
-    """
     permission_classes = [permissions.IsAuthenticated]
     
     def post(self, request, pk):
@@ -219,7 +173,6 @@ class PostDislikeView(APIView):
                 'error': 'Post not found'
             }, status=status.HTTP_404_NOT_FOUND)
         
-        # Check if user already reacted to this post
         reaction, created = Reaction.objects.get_or_create(
             user=request.user,
             post=post,
@@ -227,13 +180,10 @@ class PostDislikeView(APIView):
         )
         
         if not created:
-            # Reaction exists
             if not reaction.is_like:
-                # Already disliked, remove the dislike
                 reaction.delete()
                 message = 'Dislike removed'
             else:
-                # Was like, change to dislike
                 reaction.is_like = False
                 reaction.save()
                 message = 'Changed to dislike'

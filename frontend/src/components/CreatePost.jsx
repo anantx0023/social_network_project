@@ -12,7 +12,6 @@ const CreatePost = ({ onPostCreated }) => {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
-      // Create preview URL
       const preview = URL.createObjectURL(file);
       setPreviewUrl(preview);
     }
@@ -24,11 +23,9 @@ const CreatePost = ({ onPostCreated }) => {
     setError('');
 
     try {
-      // Create FormData to send files
       const data = new FormData();
       data.append('description', description);
       
-      // Image is optional, only append if selected
       if (image) {
         data.append('image', image);
       }
@@ -37,12 +34,10 @@ const CreatePost = ({ onPostCreated }) => {
       
       console.log('Post created:', response.data);
       
-      // Reset form
       setDescription('');
       setImage(null);
       setPreviewUrl(null);
       
-      // Call parent callback to refresh posts
       if (onPostCreated) {
         onPostCreated(response.data.post);
       }

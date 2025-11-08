@@ -17,7 +17,6 @@ const LoginPage = () => {
       ...formData,
       [name]: value,
     });
-    // Clear error when user starts typing
     if (error) setError('');
   };
 
@@ -29,14 +28,12 @@ const LoginPage = () => {
     try {
       const response = await axios.post('/login/', formData);
       
-      // Save tokens
       localStorage.setItem('access_token', response.data.tokens.access);
       localStorage.setItem('refresh_token', response.data.tokens.refresh);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       
       console.log('Login successful:', response.data);
       
-      // Redirect to home page
       navigate('/home');
       
     } catch (err) {
@@ -53,17 +50,14 @@ const LoginPage = () => {
         
         <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">Login</h2>
 
-        {/* Error Message */}
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
             {error}
           </div>
         )}
 
-        {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           
-          {/* Email Address */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email Address
@@ -80,7 +74,6 @@ const LoginPage = () => {
             />
           </div>
 
-          {/* Password */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -97,7 +90,6 @@ const LoginPage = () => {
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
@@ -117,7 +109,6 @@ const LoginPage = () => {
           </button>
         </form>
 
-        {/* Sign Up Link */}
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             Don't have account?{' '}

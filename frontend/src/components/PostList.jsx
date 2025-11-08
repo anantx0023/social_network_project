@@ -26,7 +26,6 @@ const PostList = () => {
   const handleLike = async (postId) => {
     try {
       await axios.post(`/posts/${postId}/like/`);
-      // Refresh posts to get updated counts
       fetchPosts();
     } catch (err) {
       console.error('Error liking post:', err);
@@ -36,7 +35,6 @@ const PostList = () => {
   const handleDislike = async (postId) => {
     try {
       await axios.post(`/posts/${postId}/dislike/`);
-      // Refresh posts to get updated counts
       fetchPosts();
     } catch (err) {
       console.error('Error disliking post:', err);
@@ -73,7 +71,6 @@ const PostList = () => {
       ) : (
         posts.map((post) => (
           <div key={post.id} className="bg-white rounded-2xl shadow-md overflow-hidden">
-            {/* User info and close button */}
             <div className="p-4 flex items-start justify-between">
               <div className="flex items-center space-x-3">
                 {post.user.profile_picture ? (
@@ -103,12 +100,10 @@ const PostList = () => {
               </button>
             </div>
 
-            {/* Post description */}
             <div className="px-4 pb-3">
               <p className="text-gray-800 font-bold leading-relaxed text-left">{post.description}</p>
             </div>
 
-            {/* Post image */}
             {post.image && (
               <div className="w-full bg-gray-50 flex items-center justify-center" style={{ maxHeight: '600px' }}>
                 <img
@@ -124,7 +119,6 @@ const PostList = () => {
               </div>
             )}
 
-            {/* Like/Dislike buttons */}
             <div className="p-4 border-t border-gray-100 flex items-center space-x-3">
               <button
                 onClick={() => handleLike(post.id)}

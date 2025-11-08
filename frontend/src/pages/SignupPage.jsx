@@ -24,7 +24,6 @@ const SignupPage = () => {
       ...formData,
       [name]: value,
     });
-    // Clear error for this field when user starts typing
     if (errors[name]) {
       setErrors({ ...errors, [name]: '' });
     }
@@ -33,13 +32,11 @@ const SignupPage = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         setErrors({ ...errors, profile_picture: 'Image size should not exceed 5MB' });
         return;
       }
       
-      // Validate file type
       if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
         setErrors({ ...errors, profile_picture: 'Only JPEG, JPG, and PNG files are allowed' });
         return;
@@ -63,7 +60,6 @@ const SignupPage = () => {
     setSuccess('');
 
     try {
-      // Create FormData to send files
       const data = new FormData();
       data.append('email', formData.email);
       data.append('full_name', formData.full_name);
@@ -73,14 +69,12 @@ const SignupPage = () => {
         data.append('date_of_birth', formData.date_of_birth);
       }
       
-      // Only append profile picture if one was selected
       if (profilePicture) {
         data.append('profile_picture', profilePicture);
       }
 
       const response = await axios.post('/signup/', data);
       
-      // Save tokens
       localStorage.setItem('access_token', response.data.tokens.access);
       localStorage.setItem('refresh_token', response.data.tokens.refresh);
       localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -88,14 +82,12 @@ const SignupPage = () => {
       setSuccess('Signup successful! Redirecting to home...');
       console.log('User:', response.data.user);
       
-      // Redirect after 1.5 seconds
       setTimeout(() => {
         navigate('/home');
       }, 1500);
       
     } catch (err) {
       if (err.response?.data) {
-        // Handle field-specific errors from backend
         const backendErrors = err.response.data;
         setErrors(backendErrors);
       } else {

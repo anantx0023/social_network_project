@@ -1,19 +1,15 @@
 from django.contrib import admin
-from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import User, Post, Reaction
 
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    """Admin configuration for custom User model"""
-    
     list_display = ('email', 'full_name', 'date_of_birth', 'is_staff', 'is_active')
     list_filter = ('is_staff', 'is_active', 'date_joined')
     search_fields = ('email', 'full_name')
     ordering = ('-date_joined',)
     
-    # Fields to display when viewing/editing a user
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal Info', {'fields': ('full_name', 'date_of_birth', 'profile_picture')}),
@@ -21,7 +17,6 @@ class UserAdmin(BaseUserAdmin):
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
     
-    # Fields to display when creating a new user
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
@@ -32,8 +27,6 @@ class UserAdmin(BaseUserAdmin):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    """Admin configuration for Post model"""
-    
     list_display = ('id', 'user', 'description_preview', 'created_at', 'likes_count', 'dislikes_count')
     list_filter = ('created_at', 'user')
     search_fields = ('description', 'user__email')
@@ -41,7 +34,6 @@ class PostAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at', 'likes_count', 'dislikes_count')
     
     def description_preview(self, obj):
-        """Show first 50 characters of description"""
         return obj.description[:50] + '...' if len(obj.description) > 50 else obj.description
     description_preview.short_description = 'Description'
 

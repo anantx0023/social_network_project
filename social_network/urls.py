@@ -4,13 +4,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    # Django admin
     path('admin/', admin.site.urls),
-    
-    # Include all URLs from users app with 'api/' prefix
     path('api/', include('users.urls')),
 ]
 
-# Serve media files in development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
